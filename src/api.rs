@@ -159,6 +159,9 @@ mod tests {
             "Bearer sample".into(),
         );
         let session = client.session.unwrap();
-        assert_eq!(session.endpoint.as_str(), "https://example.org:8443/v1/me");
+        assert_eq!(
+            session.endpoint.as_str(),
+            format!("https://example.org:8443{ME_PATH}")
+        );
     }
 }
