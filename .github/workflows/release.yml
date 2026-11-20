@@ -1,8 +1,6 @@
 name: Release sample SDKs
 
 on:
-  push:
-    tags: ['v*']
   workflow_dispatch:
     inputs:
       release_tag:
@@ -17,8 +15,8 @@ jobs:
   release:
     uses: Rust-Inside/rust-inside/.github/workflows/release-sdk.yml@7a383bac22d092ef2c817280391c998f18b36f9d
     with:
-      source_tag: ${{ inputs.release_tag || '' }}
-      dry_run: ${{ github.event_name == 'workflow_dispatch' && !inputs.release_tag }}
-      version: ${{ github.event_name == 'workflow_dispatch' && !inputs.release_tag && '0.0.0' || '' }}
+      source_tag: ${{ inputs.release_tag }}
+      dry_run: ${{ inputs.release_tag == '' }}
+      version: ${{ inputs.release_tag == '' && '0.0.0' || '' }}
     secrets:
       distribution_token: ${{ secrets.RUST_INSIDE_RELEASE_TOKEN }}

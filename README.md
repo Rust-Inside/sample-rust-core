@@ -2,15 +2,15 @@
 
 [English](README.md) | [한국어](README.ko.md)
 
-This Rust library fetches the signed-in user's profile. Push a version tag and Rust Inside builds and publishes the SDKs for iOS, Android, Flutter, the web, and JVM servers. An app installs its platform package and calls `account.getMe()`. The Rust client sends the session's authorization header with `GET /v1/me` and returns a `Me` with `id`, `handle`, and `displayName`. [Rust implementation](src/api.rs)
+Install the `v0.1.0` SDK for your platform to try the sample Rust library. In an app, call `account.getMe()` to fetch the signed-in user's profile. On a JVM server, use the SDK to build the profile response. [Rust source for v0.1.0](https://github.com/Rust-Inside/sample-rust-core/blob/v0.1.0/src/api.rs)
 
-[iOS](#ios) · [Android](#android) · [Flutter](#flutter) · [Web](#web) · [JVM server](#jvm-server) · [Release the SDKs](#release-the-sdks)
+[iOS](#ios) · [Android](#android) · [Flutter](#flutter) · [Web](#web) · [JVM server](#jvm-server)
 
-These examples install SDK version `0.1.0`. To call `getMe()`, supply an account server that serves `GET /v1/me` and returns the profile fields shown above. Set `apiOrigin` to that server's origin and `authorization` to the full authorization header value, including `Bearer <token>` if your server uses bearer tokens.
+To run the client examples, point `apiOrigin` at your account server. The Rust client sends `GET /v1/me` with the `authorization` value you supply (for example, `Bearer <token>`). The server must return JSON with `id`, `handle`, and `displayName`.
 
 ## iOS
 
-In Xcode, open **File → Add Package Dependencies**, enter the repository URL, and choose a version. Add the `SampleRustCoreSDK` product to your app target. The Swift package supports iOS 18 or later on arm64 devices and simulators. Xcode downloads the prebuilt XCFramework for the selected version. [iOS installation guide](https://github.com/Rust-Inside/sample-ios-sdk)
+In Xcode, open **File → Add Package Dependencies**, enter the repository URL, and select **Exact Version** `0.1.0`. Add the `SampleRustCoreSDK` product to your app target. The Swift package supports iOS 18 or later on arm64 devices and simulators. Xcode downloads the prebuilt XCFramework for the selected version. [iOS installation guide](https://github.com/Rust-Inside/sample-ios-sdk)
 
 ```text
 https://github.com/Rust-Inside/sample-ios-sdk.git
@@ -133,28 +133,11 @@ Run the tests from the library root with stable Rust. The integration test start
 cargo test --locked
 ```
 
-## Release the SDKs
+## Release workflow reference
 
-### Set up the first release
+The manifest lists the Rust API module and the five SDK repositories. The sample workflow runs manually from **Actions → Release sample SDKs → Run workflow**. [Manifest](rust-inside.json) · [Workflow](.github/workflows/release.yml)
 
-`rust-inside.json` specifies the Rust module that defines the public API and the five SDK repositories. To add a destination, create an initial commit on its default branch and add the repository address to the manifest. [Release configuration](rust-inside.json)
-
-To publish across repositories, save a token as `RUST_INSIDE_RELEASE_TOKEN` under **Settings → Secrets and variables → Actions** in the core repository. Grant it **Contents: Read and write** on the destination SDK repositories. The workflow reads the public Rust Inside repository with its default GitHub token. [Rust Inside](https://github.com/Rust-Inside/rust-inside)
-
-### Publish a version
-
-For a dry run, choose **Actions → Release sample SDKs → Run workflow** and leave `release_tag` blank. This builds and packages version `0.0.0` without publishing. [Release workflow](.github/workflows/release.yml)
-
-To publish, tag the core commit you want to release. For example, to release `0.1.1`, run these commands.
-
-```sh
-git tag v0.1.1
-git push origin v0.1.1
-```
-
-After the build succeeds, each SDK repository lists the new version under **Releases**.
-
-To retry a failed release, run the workflow from `main` and enter the existing core tag (for example, `v0.1.0`) in `release_tag`. The workflow builds and publishes from the same tagged Rust source.
+Leave `release_tag` blank for a dry run that builds and packages version `0.0.0`. To publish from an existing core tag, enter that tag in `release_tag`. Only publishing requires the `RUST_INSIDE_RELEASE_TOKEN` secret, with **Contents: Read and write** on the destination SDK repositories.
 
 ## License
 

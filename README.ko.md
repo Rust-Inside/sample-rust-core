@@ -2,15 +2,15 @@
 
 [English](README.md) | [한국어](README.ko.md)
 
-로그인한 사용자의 프로필을 조회하는 Rust 라이브러리입니다. 코어에 버전 태그를 푸시하면 Rust Inside가 iOS·Android·Flutter·웹·JVM 서버용 SDK를 빌드하고 배포합니다. 앱은 자기 플랫폼용 패키지를 설치한 뒤 `account.getMe()`를 호출합니다. Rust 클라이언트가 세션의 인증 헤더를 담아 `GET /v1/me`를 요청하고, `id`, `handle`, `displayName`이 담긴 `Me`를 반환합니다. [Rust 구현](src/api.rs)
+플랫폼에 맞는 `v0.1.0` SDK를 설치해 샘플 Rust 라이브러리를 사용해 보세요. 앱에서는 `account.getMe()`로 로그인한 사용자의 프로필을 조회하고, JVM 서버에서는 SDK로 프로필 응답을 만듭니다. [v0.1.0 Rust 소스](https://github.com/Rust-Inside/sample-rust-core/blob/v0.1.0/src/api.rs)
 
-[iOS](#ios) · [Android](#android) · [Flutter](#flutter) · [웹](#웹) · [JVM 서버](#jvm-서버) · [SDK 배포](#sdk-배포)
+[iOS](#ios) · [Android](#android) · [Flutter](#flutter) · [웹](#웹) · [JVM 서버](#jvm-서버)
 
-아래 예제는 SDK `0.1.0`을 설치합니다. `getMe()`를 호출할 때는 `GET /v1/me` 요청에 위 프로필 필드를 반환하는 계정 서버가 필요합니다. `apiOrigin`에는 그 서버의 주소를, `authorization`에는 세션의 인증 헤더 값을 넣으세요. Bearer 인증을 쓰면 `Bearer <token>` 전체를 전달합니다.
+클라이언트 예제를 실행할 때는 `apiOrigin`에 계정 서버 주소를 넣으세요. Rust 클라이언트는 `Bearer <token>`처럼 `authorization`에 전달한 값을 헤더에 담아 `GET /v1/me`를 요청합니다. 서버는 `id`, `handle`, `displayName`이 담긴 JSON을 반환해야 합니다.
 
 ## iOS
 
-Xcode의 **File → Add Package Dependencies**에서 저장소 URL과 버전을 선택하고 앱 타깃에 `SampleRustCoreSDK`를 추가하세요. Swift 패키지는 iOS 18 이상의 arm64 기기와 시뮬레이터를 지원합니다. Xcode가 선택한 버전의 XCFramework를 내려받습니다. [iOS 설치 가이드](https://github.com/Rust-Inside/sample-ios-sdk/blob/main/README.ko.md)
+Xcode의 **File → Add Package Dependencies**에서 저장소 URL을 입력하고 **Exact Version**에서 `0.1.0`을 선택한 뒤 앱 타깃에 `SampleRustCoreSDK`를 추가하세요. Swift 패키지는 iOS 18 이상의 arm64 기기와 시뮬레이터를 지원합니다. Xcode가 선택한 버전의 XCFramework를 내려받습니다. [iOS 설치 가이드](https://github.com/Rust-Inside/sample-ios-sdk/blob/main/README.ko.md)
 
 ```text
 https://github.com/Rust-Inside/sample-ios-sdk.git
@@ -133,28 +133,11 @@ Rust stable을 설치하고 라이브러리 루트에서 테스트를 실행하�
 cargo test --locked
 ```
 
-## SDK 배포
+## 릴리스 워크플로 참고
 
-### 첫 배포 전 설정
+설정 파일에는 공개할 Rust API 모듈과 SDK를 받을 저장소 다섯 곳이 지정돼 있습니다. 샘플 워크플로는 **Actions → Release sample SDKs → Run workflow**에서 수동으로 실행합니다. [배포 설정](rust-inside.json) · [워크플로](.github/workflows/release.yml)
 
-`rust-inside.json`에는 공개 API를 담은 Rust 모듈과 SDK를 배포할 저장소 다섯 곳을 지정했습니다. 새 배포처를 연결하려면 해당 저장소의 기본 브랜치에 첫 커밋을 만들고 설정 파일에 주소를 추가하세요. [배포 설정](rust-inside.json)
-
-여러 저장소에 배포하려면 코어 저장소의 **Settings → Secrets and variables → Actions**에 `RUST_INSIDE_RELEASE_TOKEN`을 등록하세요. 대상 SDK 저장소에 **Contents: Read and write** 권한이 있는 토큰을 사용합니다. 공개된 Rust Inside 저장소를 읽을 때는 워크플로의 기본 GitHub 토큰을 사용합니다. [Rust Inside](https://github.com/Rust-Inside/rust-inside/blob/main/README.ko.md)
-
-### 새 버전 배포
-
-**Actions → Release sample SDKs → Run workflow**에서 `release_tag`를 비워 두면 `0.0.0`으로 빌드와 패키징만 시험합니다. [릴리스 워크플로](.github/workflows/release.yml)
-
-배포할 때는 코어의 릴리스 커밋에 버전 태그를 붙여 푸시하세요. 예를 들어 다음 버전 `0.1.1`을 배포하려면 아래 명령을 실행합니다.
-
-```sh
-git tag v0.1.1
-git push origin v0.1.1
-```
-
-빌드가 성공하면 각 SDK 저장소의 **Releases**에서 새 버전을 확인할 수 있습니다.
-
-실패한 배포를 재시도하려면 `main`에서 워크플로를 실행하고 `release_tag`에 `v0.1.0` 같은 기존 코어 태그를 입력하세요. 같은 태그의 Rust 소스로 SDK를 빌드해 배포합니다.
+`release_tag`를 비워 두면 버전 `0.0.0`으로 빌드와 패키징만 시험합니다. 기존 코어 태그의 소스로 배포하려면 `release_tag`에 해당 태그를 입력하세요. 이때는 대상 SDK 저장소에 **Contents: Read and write** 권한이 있는 `RUST_INSIDE_RELEASE_TOKEN` 시크릿이 필요합니다.
 
 ## 라이선스
 
