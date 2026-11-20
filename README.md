@@ -143,7 +143,7 @@ To publish across repositories, save a token as `RUST_INSIDE_RELEASE_TOKEN` unde
 
 ### Publish a version
 
-For a dry run, choose **Actions → Release sample SDKs → Run workflow**. This builds and packages version `0.0.0`. [Release workflow](.github/workflows/release.yml)
+For a dry run, choose **Actions → Release sample SDKs → Run workflow** and leave `release_tag` blank. This builds and packages version `0.0.0` without publishing. [Release workflow](.github/workflows/release.yml)
 
 To publish, tag the core commit you want to release. For example, to release `0.1.1`, run these commands.
 
@@ -153,6 +153,8 @@ git push origin v0.1.1
 ```
 
 After the build succeeds, each SDK repository lists the new version under **Releases**.
+
+To retry a failed release, run the workflow from `main` and enter the existing core tag (for example, `v0.1.0`) in `release_tag`. The workflow builds and publishes from the same tagged Rust source.
 
 ## License
 

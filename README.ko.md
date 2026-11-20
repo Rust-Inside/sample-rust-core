@@ -143,7 +143,7 @@ cargo test --locked
 
 ### 새 버전 배포
 
-**Actions → Release sample SDKs → Run workflow**를 선택하면 `0.0.0`으로 빌드와 패키징을 시험할 수 있습니다. [릴리스 워크플로](.github/workflows/release.yml)
+**Actions → Release sample SDKs → Run workflow**에서 `release_tag`를 비워 두면 `0.0.0`으로 빌드와 패키징만 시험합니다. [릴리스 워크플로](.github/workflows/release.yml)
 
 배포할 때는 코어의 릴리스 커밋에 버전 태그를 붙여 푸시하세요. 예를 들어 다음 버전 `0.1.1`을 배포하려면 아래 명령을 실행합니다.
 
@@ -153,6 +153,8 @@ git push origin v0.1.1
 ```
 
 빌드가 성공하면 각 SDK 저장소의 **Releases**에서 새 버전을 확인할 수 있습니다.
+
+실패한 배포를 재시도하려면 `main`에서 워크플로를 실행하고 `release_tag`에 `v0.1.0` 같은 기존 코어 태그를 입력하세요. 같은 태그의 Rust 소스로 SDK를 빌드해 배포합니다.
 
 ## 라이선스
 

@@ -4,15 +4,21 @@ on:
   push:
     tags: ['v*']
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing core tag to publish (leave blank for a dry run)
+        required: false
+        type: string
 
 permissions:
   contents: read
 
 jobs:
   release:
-    uses: Rust-Inside/rust-inside/.github/workflows/release-sdk.yml@a913689d26640048eac9dfce3e268f3593ba31cd
+    uses: Rust-Inside/rust-inside/.github/workflows/release-sdk.yml@7a383bac22d092ef2c817280391c998f18b36f9d
     with:
-      dry_run: ${{ github.event_name == 'workflow_dispatch' }}
-      version: ${{ github.event_name == 'workflow_dispatch' && '0.0.0' || '' }}
+      source_tag: ${{ inputs.release_tag || '' }}
+      dry_run: ${{ github.event_name == 'workflow_dispatch' && !inputs.release_tag }}
+      version: ${{ github.event_name == 'workflow_dispatch' && !inputs.release_tag && '0.0.0' || '' }}
     secrets:
       distribution_token: ${{ secrets.RUST_INSIDE_RELEASE_TOKEN }}
