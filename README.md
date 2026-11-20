@@ -110,20 +110,28 @@ dependencies {
 }
 ```
 
-`mePath()` returns `/v1/me`. The server authenticates requests at that route and looks up the account. Pass the account fields to `meResponseJson` to build the JSON response that the app's `getMe()` reads.
+Declare `GET /v1/me` in your Spring controller and configure Spring Security to require authentication for that route. In this example, your application provides `AccountService.requireByUsername` to look up the authenticated account. The controller sends the JSON returned by `meResponseJson()`.
 
 ```kotlin
 import dev.rustinside.sample_rust_coresdk.meResponseJson
+import java.security.Principal
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RestController
 
-fun profileResponse(id: String, handle: String, nickname: String): ResponseEntity<String> =
-    ResponseEntity.ok()
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(meResponseJson(id, handle, nickname))
+@RestController
+class ProfileController(private val accounts: AccountService) {
+    @GetMapping("/v1/me", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getMe(principal: Principal): String {
+        val account = accounts.requireByUsername(principal.name)
+        return meResponseJson(account.id, account.handle, account.nickname)
+    }
+}
 ```
 
-The Rust module marked `#[rust_inside::server]` exposes `mePath()` and `meResponseJson()` to the server SDK only. A server that calls another account service can also use `AccountClient.getMe()`.
+The current core source keeps the request path in a private Rust constant. The published `v0.1.0` JAR still contains the earlier `mePath()` API. [Current Rust source](https://github.com/Rust-Inside/sample-rust-core/blob/main/src/api.rs)
+
+The Rust module marked `#[rust_inside::server]` exposes `meResponseJson()` to the server SDK only. A server that calls another account service can also use `AccountClient.getMe()`.
 
 ## Local tests
 

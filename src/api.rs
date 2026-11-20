@@ -3,6 +3,8 @@ use reqwest::{Client, Url};
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
 
+const ME_PATH: &str = "/v1/me";
+
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Me {
@@ -45,11 +47,6 @@ impl AccountClient {
 pub mod server {
     use super::Me;
 
-    /// The account is selected by the authenticated session, so this route has no ID.
-    pub fn me_path() -> String {
-        "/v1/me".into()
-    }
-
     pub fn me_response_json(id: String, handle: String, nickname: String) -> String {
         let display_name = match nickname.trim() {
             "" => format!("@{handle}"),
@@ -79,7 +76,7 @@ impl Session {
         {
             return Err("Expected an HTTP(S) API origin without embedded credentials".into());
         }
-        endpoint.set_path(&server::me_path());
+        endpoint.set_path(ME_PATH);
         endpoint.set_query(None);
         endpoint.set_fragment(None);
         let mut headers = HeaderMap::new();
@@ -121,13 +118,12 @@ fn http_client() -> Result<reqwest::ClientBuilder, String> {
 
 #[cfg(test)]
 mod tests {
-    use super::server::{me_path, me_response_json};
+    use super::server::me_response_json;
     use super::*;
     use serde_json::{json, Value};
 
     #[test]
-    fn public_profile_uses_the_session_route_and_falls_back_to_the_handle() {
-        assert_eq!(me_path(), "/v1/me");
+    fn public_profile_falls_back_to_the_handle() {
         let body = me_response_json("u42".into(), "martin".into(), "  ".into());
         assert_eq!(
             serde_json::from_str::<Value>(&body).unwrap(),

@@ -110,20 +110,28 @@ dependencies {
 }
 ```
 
-`mePath()`는 `/v1/me`를 반환합니다. 서버는 이 경로에서 요청을 인증하고 계정을 조회합니다. 계정 정보를 `meResponseJson`에 넘기면 앱의 `getMe()`가 읽을 JSON 응답이 만들어집니다.
+Spring 컨트롤러에 `GET /v1/me`를 선언하고, Spring Security에서 이 경로에 인증을 요구하도록 설정하세요. 예제의 `AccountService.requireByUsername`은 앱에서 구현하는 계정 조회 메서드입니다. 컨트롤러는 인증된 계정의 데이터를 `meResponseJson()`에 넘겨 JSON 응답을 보냅니다.
 
 ```kotlin
 import dev.rustinside.sample_rust_coresdk.meResponseJson
+import java.security.Principal
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RestController
 
-fun profileResponse(id: String, handle: String, nickname: String): ResponseEntity<String> =
-    ResponseEntity.ok()
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(meResponseJson(id, handle, nickname))
+@RestController
+class ProfileController(private val accounts: AccountService) {
+    @GetMapping("/v1/me", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getMe(principal: Principal): String {
+        val account = accounts.requireByUsername(principal.name)
+        return meResponseJson(account.id, account.handle, account.nickname)
+    }
+}
 ```
 
-`mePath()`와 `meResponseJson()`은 Rust에서 `#[rust_inside::server]`를 붙인 모듈에 있어 서버 SDK에서만 호출할 수 있습니다. 다른 계정 서버에 요청을 보낼 때는 서버에서도 `AccountClient.getMe()`를 쓸 수 있습니다.
+현재 Rust 코어 소스는 요청 경로를 내부 상수로 관리합니다. 이미 배포된 `v0.1.0` JAR에는 이전 `mePath()` API가 포함돼 있습니다. [현재 Rust 소스](https://github.com/Rust-Inside/sample-rust-core/blob/main/src/api.rs)
+
+`meResponseJson()`은 Rust에서 `#[rust_inside::server]`를 붙인 모듈에 있어 서버 SDK에서 호출할 수 있습니다. 다른 계정 서버에 요청을 보낼 때는 서버에서도 `AccountClient.getMe()`를 쓸 수 있습니다.
 
 ## 로컬 테스트
 
