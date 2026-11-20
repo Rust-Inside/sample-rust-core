@@ -1,0 +1,11 @@
+{
+  "api": "src/api.rs",
+  "backend": "jvm",
+  "repositories": {
+    "backend": "Rust-Inside/sample-server-sdk",
+    "ios": "Rust-Inside/sample-ios-sdk",
+    "android": "Rust-Inside/sample-android-sdk",
+    "flutter": "Rust-Inside/sample-flutter-sdk",
+    "web": "Rust-Inside/sample-web-sdk"
+  }
+}

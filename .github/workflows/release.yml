@@ -1,0 +1,18 @@
+name: Release sample SDKs
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    uses: Rust-Inside/rust-inside/.github/workflows/release-sdk.yml@a913689d26640048eac9dfce3e268f3593ba31cd
+    with:
+      dry_run: ${{ github.event_name == 'workflow_dispatch' }}
+      version: ${{ github.event_name == 'workflow_dispatch' && '0.0.0' || '' }}
+    secrets:
+      distribution_token: ${{ secrets.RUST_INSIDE_RELEASE_TOKEN }}
