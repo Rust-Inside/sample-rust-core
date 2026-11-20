@@ -1,6 +1,6 @@
 # Sample Rust Core
 
-[English](README.md) | [한국어](README.ko.md)
+[English](README.md)
 
 플랫폼에 맞는 `v0.2.0` SDK를 설치해 샘플 Rust 라이브러리를 사용해 보세요. 앱에서는 `account.getMe()`로 로그인한 사용자의 프로필을 조회하고, JVM 서버에서는 SDK로 프로필 응답을 만듭니다. [v0.2.0 Rust 소스](https://github.com/Rust-Inside/sample-rust-core/blob/v0.2.0/src/api.rs)
 
