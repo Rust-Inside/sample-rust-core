@@ -1,6 +1,6 @@
 # Sample Rust Core
 
-[English](README.md) | [한국어](README.ko.md)
+[한국어](README.ko.md)
 
 Install the `v0.2.0` SDK for your platform to try the sample Rust library. In an app, call `account.getMe()` to fetch the signed-in user's profile. On a JVM server, use the SDK to build the profile response. [Rust source for v0.2.0](https://github.com/Rust-Inside/sample-rust-core/blob/v0.2.0/src/api.rs)
 
