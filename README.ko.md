@@ -121,7 +121,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class ProfileController(private val accounts: AccountService) {
-    @GetMapping("/v1/me", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("/v2/me", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getMe(principal: Principal): String {
         val account = accounts.requireByUsername(principal.name)
         return meResponseJson(account.id, account.handle, account.nickname)
