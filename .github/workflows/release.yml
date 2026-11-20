@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   release:
-    uses: Rust-Inside/rust-inside/.github/workflows/release-sdk.yml@ebdcfaf2f4142aab11680c3936b6f5daccf21e34
+    uses: Rust-Inside/rust-inside/.github/workflows/release-sdk.yml@cb6f0384d7d4eca1e393cc8a373e65a5578c81bf
     with:
       source_tag: ${{ inputs.release_tag }}
       dry_run: ${{ inputs.dry_run || inputs.release_tag == '' }}
