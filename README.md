@@ -2,7 +2,7 @@
 
 [English](README.md) | [한국어](README.ko.md)
 
-Install the `v0.1.0` SDK for your platform to try the sample Rust library. In an app, call `account.getMe()` to fetch the signed-in user's profile. On a JVM server, use the SDK to build the profile response. [Rust source for v0.1.0](https://github.com/Rust-Inside/sample-rust-core/blob/v0.1.0/src/api.rs)
+Install the `v0.2.0` SDK for your platform to try the sample Rust library. In an app, call `account.getMe()` to fetch the signed-in user's profile. On a JVM server, use the SDK to build the profile response. [Rust source for v0.2.0](https://github.com/Rust-Inside/sample-rust-core/blob/v0.2.0/src/api.rs)
 
 [iOS](#ios) · [Android](#android) · [Flutter](#flutter) · [Web](#web) · [JVM server](#jvm-server)
 
@@ -10,7 +10,7 @@ To run the client examples, point `apiOrigin` at your account server. The Rust c
 
 ## iOS
 
-In Xcode, open **File → Add Package Dependencies**, enter the repository URL, and select **Exact Version** `0.1.0`. Add the `SampleRustCoreSDK` product to your app target. The Swift package supports iOS 18 or later on arm64 devices and simulators. Xcode downloads the prebuilt XCFramework for the selected version. [iOS installation guide](https://github.com/Rust-Inside/sample-ios-sdk)
+In Xcode, open **File → Add Package Dependencies**, enter the repository URL, and select **Exact Version** `0.2.0`. Add the `SampleRustCoreSDK` product to your app target. The Swift package supports iOS 18 or later on arm64 devices and simulators. Xcode downloads the prebuilt XCFramework for the selected version. [iOS installation guide](https://github.com/Rust-Inside/sample-ios-sdk)
 
 ```text
 https://github.com/Rust-Inside/sample-ios-sdk.git
@@ -32,7 +32,7 @@ The Android SDK supports API level 23 and later. Register the release URL as an 
 
 ```kotlin
 dependencies {
-    implementation("dev.rustinside.sample_rust_coresdk:sample-rust-core-android:0.1.0")
+    implementation("dev.rustinside.sample_rust_coresdk:sample-rust-core-android:0.2.0")
 }
 ```
 
@@ -54,7 +54,7 @@ dependencies:
   sample_rust_core_flutter:
     git:
       url: https://github.com/Rust-Inside/sample-flutter-sdk.git
-      ref: v0.1.0
+      ref: v0.2.0
       path: flutter
 ```
 
@@ -77,7 +77,7 @@ Future<String> displayName(String apiOrigin, String authorization) async {
 Install the release archive with npm from your web project. [Web installation guide](https://github.com/Rust-Inside/sample-web-sdk)
 
 ```sh
-npm install https://github.com/Rust-Inside/sample-web-sdk/releases/download/v0.1.0/sample-rust-core-web-0.1.0.tgz
+npm install https://github.com/Rust-Inside/sample-web-sdk/releases/download/v0.2.0/sample-rust-core-web-0.2.0.tgz
 ```
 
 Call `init()` once at startup to load WebAssembly. Configure your bundler to ship the package's `index_bg.wasm` file with your app.
@@ -106,7 +106,7 @@ The Kotlin/Spring server uses the JVM SDK as a JAR and requires JVM 17 or later.
 
 ```kotlin
 dependencies {
-    implementation("dev.rustinside.sample_rust_coresdk:sample-rust-core-jvm:0.1.0")
+    implementation("dev.rustinside.sample_rust_coresdk:sample-rust-core-jvm:0.2.0")
 }
 ```
 
@@ -129,7 +129,7 @@ class ProfileController(private val accounts: AccountService) {
 }
 ```
 
-The current core source keeps the request path in a private Rust constant. The published `v0.1.0` JAR still contains the earlier `mePath()` API. [Current Rust source](https://github.com/Rust-Inside/sample-rust-core/blob/main/src/api.rs)
+As of `v0.2.0`, the client keeps its request path in a private Rust constant. If upgrading from `v0.1.0`, declare `/v1/me` in Spring in place of `mePath()`. [Rust source](src/api.rs)
 
 The Rust module marked `#[rust_inside::server]` exposes `meResponseJson()` to the server SDK only. A server that calls another account service can also use `AccountClient.getMe()`.
 
@@ -143,9 +143,9 @@ cargo test --locked
 
 ## Release workflow reference
 
-The manifest lists the Rust API module and the five SDK repositories. The sample workflow runs manually from **Actions → Release sample SDKs → Run workflow**. [Manifest](rust-inside.json) · [Workflow](.github/workflows/release.yml)
+The manifest lists the Rust API module and the five SDK repositories. Its `requiredApi` entries check `AccountClient.getMe()` in the app and web SDKs and `meResponseJson()` in the JVM SDK. The sample workflow runs manually from **Actions → Release sample SDKs → Run workflow**. [Manifest](rust-inside.json) · [Workflow](.github/workflows/release.yml)
 
-Leave `release_tag` blank for a dry run that builds and packages version `0.0.0`. To publish from an existing core tag, enter that tag in `release_tag`. Only publishing requires the `RUST_INSIDE_RELEASE_TOKEN` secret, with **Contents: Read and write** on the destination SDK repositories.
+Keep `dry_run` enabled to build without publishing. Enter an existing tag such as `v0.2.0` in `release_tag` to build that exact version, or leave it blank to try the selected branch as `0.0.0`. To publish from Actions, enter a tag and disable `dry_run`. That requires the `RUST_INSIDE_RELEASE_TOKEN` secret, with **Contents: Read and write** on the destination SDK repositories.
 
 ## License
 

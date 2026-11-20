@@ -7,5 +7,22 @@
     "android": "Rust-Inside/sample-android-sdk",
     "flutter": "Rust-Inside/sample-flutter-sdk",
     "web": "Rust-Inside/sample-web-sdk"
+  },
+  "requiredApi": {
+    "backend": [
+      "meResponseJson"
+    ],
+    "ios": [
+      "AccountClient.getMe"
+    ],
+    "android": [
+      "AccountClient.getMe"
+    ],
+    "flutter": [
+      "AccountClient.getMe"
+    ],
+    "web": [
+      "AccountClient.getMe"
+    ]
   }
 }
