@@ -4,19 +4,23 @@ on:
   workflow_dispatch:
     inputs:
       release_tag:
-        description: Existing core tag to publish (leave blank for a dry run)
+        description: Existing core tag to build (leave blank to test the selected branch)
         required: false
         type: string
+      dry_run:
+        description: Build and validate SDKs without publishing
+        type: boolean
+        default: true
 
 permissions:
   contents: read
 
 jobs:
   release:
-    uses: Rust-Inside/rust-inside/.github/workflows/release-sdk.yml@7a383bac22d092ef2c817280391c998f18b36f9d
+    uses: Rust-Inside/rust-inside/.github/workflows/release-sdk.yml@ebdcfaf2f4142aab11680c3936b6f5daccf21e34
     with:
       source_tag: ${{ inputs.release_tag }}
-      dry_run: ${{ inputs.release_tag == '' }}
+      dry_run: ${{ inputs.dry_run || inputs.release_tag == '' }}
       version: ${{ inputs.release_tag == '' && '0.0.0' || '' }}
     secrets:
       distribution_token: ${{ secrets.RUST_INSIDE_RELEASE_TOKEN }}
